@@ -11,6 +11,24 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['prefix' => '/'], function() {
+    Route::get('/', 'HomeController@index')->name('home');
+
+    Route::get('/anketa-{litera}', 'AnketaController@index')
+        ->where('litera', 'a|b')
+        ->name('anketa');
+
+    Route::post('/anketa-{litera}', 'AnketaController@post')
+        ->where('litera', 'a|b');
+});
+
+// Admin panel
+Route::group(['prefix' => '/admin', 'middleware' => ['auth']], function () {
+    require __DIR__ . '/admin.php';
+});
+
+Route::group(['namespace' => 'Auth'], function () {
+    Route::get('/login', 'LoginController@showLoginForm')->name('login');
+    Route::post('/login', 'LoginController@login');
+    Route::post('/logout', 'LoginController@logout')->name('logout');
 });
